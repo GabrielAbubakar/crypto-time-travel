@@ -1,34 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Crypto Time Travel
 
-## Getting Started
+![Crypto Time Travel](https://i.imgur.com/)
 
-First, run the development server:
+## Overview:
+
+- Crypto Time Travel is a crypto-currency value growth aggregator application.
+- Its major functionality is the receipt of a date in the past, a price in USD and a specific crypto-currency from a user
+- It uses this information to communicate with the Coin Gecko API and gets the current price of queried crypto currency in USD.
+- Price and percentage increase or decrease in value will be computed on the client side and the result will be rendered in cards for the user to see
+
+
+## Stack
+
+- **Framework**: [Next.js]()
+- **Languages**: [TypeScript]()
+- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+- **Styling**: [TailwindCSS]()
+- **Animations**: [Framer Motion](https://www.framer.com/)
+- **Testing**: 
+    - [React Testing Library](https://testing-library.com/)
+    - [Jest](https://jestjs.io/)
+- **Deployment**: [Vercel](https://www.vercel.com/)
+- **API**: 
+    - [API Route]()
+
+
+## Running Locally
 
 ```bash
-npm run dev
-# or
-yarn dev
+$ git clone https://github.com/GabrielAbubakar/crypto-time-travel.git
+$ cd crypto-time-travel
+$ npm install
+$ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Styling
 
-## Learn More
+Undecided
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## New Learnings
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+There were various new tools I learned in the development of this application and are listed such:
+-
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Testing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Testing was setup for this project using the structure found at [this article:](https://blog.jarrodwatts.com/how-to-set-up-nextjs-with-jest-react-testing-library-and-playwright)
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
