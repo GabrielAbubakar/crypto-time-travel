@@ -19,11 +19,6 @@ const Home: NextPage = () => {
     }
 
 
-    useEffect(() => {
-        // console.log(coin)
-    }, [coin])
-
-
     return (
         <div>
             <h1>Crypto Time Travel🕑</h1>
@@ -45,7 +40,9 @@ const Home: NextPage = () => {
                 <select name="select-currency" id="select" onChange={(e) => setCoin(e.target.value)}>
                     {
                         currencyData && currencyData.map((item: Currency, i: number) => (
-                            <option value={item.id} key={i}>{item.name} ({item.symbol})</option>
+                            <option value={item.id} key={i}>
+                                {item.name} ({item.symbol})
+                            </option>
                         ))
                     }
                 </select> <br /> <br />
