@@ -22,6 +22,7 @@ const Results: NextPage = () => {
     const [isIncreased, setIsIncreased] = useState<boolean>()
     const [percentDifference, setPercentDifference] = useState<number>()
     const [priceDifference, setPriceDifference] = useState<number>()
+    const [payout, setPayout] = useState<string>()
 
 
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
@@ -31,54 +32,65 @@ const Results: NextPage = () => {
             })
             .then(data => {
                 setHistoricalData(data)
-                setFetchSuccess(true)
-                console.log(data);
+                // console.log(data);
             })
             .catch((err) => {
-                setFetchSuccess(false)
                 console.log(err);
             })
 
-        await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`)
+        await fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
             .then((res) => {
                 return res.json()
             })
             .then(data => {
                 setCurrentData(data)
-                setFetchSuccess(true)
-                console.log(data);
+                // console.log(data);
             })
             .catch((err) => {
-                setFetchSuccess(false)
                 console.log(err);
             })
     }
 
+    const computeResults = () => {
+        let percentageDiff: number
+        let priceDiff: number
+        const currentUsd = currentData.market_data.current_price.usd
+        const historicalUsd = historicalData.market_data.current_price.usd
+
+
+
+        if (currentUsd > historicalUsd) {
+            setIsIncreased(true)
+            priceDiff = currentUsd - historicalUsd
+            percentageDiff = (priceDiff / historicalUsd) * 100
+            setPercentDifference(percentageDiff)
+
+        } else if (currentUsd < historicalUsd) {
+            setIsIncreased(false)
+            priceDiff = historicalUsd - currentUsd
+            percentageDiff = (priceDiff / historicalUsd) * 100
+            setPercentDifference(percentageDiff)
+        }
+
+    }
+
     useEffect(() => {
-        if (query.date) {
+        if (date && coin && price) {
             fetchData(date, coin)
+            setDataSuccess(true)
+        } else {
+            setDataSuccess(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query])
 
     useEffect(() => {
-        if (historicalData) {
-            if (historicalData.market_data.current_price.usd.toFixed(2) > parseFloat(price as string)) {
-                setIsIncreased(true)
-                setPriceDifference(historicalData.market_data.current_price.usd.toFixed(2) - parseFloat(price as string))
-                // setPercentDifference(priceDifference / parseFloat(price) * 100)
-            }
+        if (historicalData && currentData) {
+            computeResults()
+            setFetchSuccess(true)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [historicalData])
-
-    useEffect(() => {
-        if (date == '' || price == '' || coin == '') {
-            setDataSuccess(false)
-        } else {
-            setDataSuccess(true)
-        }
-    }, [date, price, coin])
+    }, [historicalData, currentData])
 
 
 
@@ -90,7 +102,6 @@ const Results: NextPage = () => {
         )
     }
 
-
     return (
         <div>
             <h1>If I had invested at</h1>
@@ -98,14 +109,22 @@ const Results: NextPage = () => {
             <p>PRICE: ${price}</p>
             <p>COIN: {coin}</p>
 
-            <h2>The value today will be</h2>
             {
                 fetchSuccess && (
                     <div>
+                        <h3>Historical Data</h3>
                         <p>Name: {historicalData.name}</p>
                         <p>Price: ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
-                        <p>Price Increase: ${priceDifference}</p>
-                        <p>Percentage Increase: ${percentDifference}</p>
+
+
+                        <h3>Current Data</h3>
+                        <p>Name: {currentData.name}</p>
+                        <p>Price: ${currentData.market_data.current_price.usd.toFixed(2)}</p>
+
+
+                        <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
+                            Percentage Difference: {percentDifference?.toFixed(2)}%
+                        </h2>
                     </div>
                 )
             }
