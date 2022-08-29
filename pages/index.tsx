@@ -8,32 +8,20 @@ const Home: NextPage = () => {
 
     const [price, setPrice] = useState('')
     const [date, setDate] = useState('')
-    const [currency, setCurrency] = useState('')
+    const [coin, setCoin] = useState(currencyData[0].id)
 
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e: any): void => {
+        // reset UI state on form submit
         e.preventDefault()
         setDate('')
         setPrice('')
     }
 
 
-    const fetchData = async () => {
-        await fetch('')
-            .then((res) => {
-                res.json()
-            })
-            .then(() => {
-
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
-
     useEffect(() => {
-        console.log()
-    }, [date])
+        // console.log(coin)
+    }, [coin])
 
 
     return (
@@ -54,7 +42,7 @@ const Home: NextPage = () => {
 
 
                 <label htmlFor="select-currency">IN:</label> <br />
-                <select name="select-currency" id="select">
+                <select name="select-currency" id="select" onChange={(e) => setCoin(e.target.value)}>
                     {
                         currencyData && currencyData.map((item: Currency, i: number) => (
                             <option value={item.id} key={i}>{item.name} ({item.symbol})</option>
@@ -71,6 +59,7 @@ const Home: NextPage = () => {
                         pathname: "/results",
                         query: {
                             price,
+                            coin,
                             date
                         }
                     }}>
@@ -80,10 +69,7 @@ const Home: NextPage = () => {
                     </Link>
                 </button>
 
-
             </form>
-
-
 
         </div>
     )
