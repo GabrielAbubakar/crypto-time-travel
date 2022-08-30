@@ -11,6 +11,7 @@ const Results: NextPage = () => {
     // desctructure the data needed from router params
     const { query } = useRouter()
     const { date, price, coin } = query
+    // const [priceInt, setPriceInt] = useState(parseInt(price as string))
 
     // ui state
     const [historicalData, setHistoricalData] = useState<any>()
@@ -21,8 +22,6 @@ const Results: NextPage = () => {
 
     const [isIncreased, setIsIncreased] = useState<boolean>()
     const [percentDifference, setPercentDifference] = useState<number>()
-    const [priceDifference, setPriceDifference] = useState<number>()
-    const [payout, setPayout] = useState<string>()
 
 
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
@@ -57,8 +56,6 @@ const Results: NextPage = () => {
         const currentUsd = currentData.market_data.current_price.usd
         const historicalUsd = historicalData.market_data.current_price.usd
 
-
-
         if (currentUsd > historicalUsd) {
             setIsIncreased(true)
             priceDiff = currentUsd - historicalUsd
@@ -71,7 +68,6 @@ const Results: NextPage = () => {
             percentageDiff = (priceDiff / historicalUsd) * 100
             setPercentDifference(percentageDiff)
         }
-
     }
 
     useEffect(() => {
@@ -112,19 +108,46 @@ const Results: NextPage = () => {
             {
                 fetchSuccess && (
                     <div>
-                        <h3>Historical Data</h3>
+                        <h3>Your purchase info:</h3>
+                        <p>Investment: ${price}</p>
                         <p>Name: {historicalData.name}</p>
-                        <p>Price: ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
+                        <p>Price (per {historicalData.symbol}): ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
 
 
                         <h3>Current Data</h3>
                         <p>Name: {currentData.name}</p>
-                        <p>Price: ${currentData.market_data.current_price.usd.toFixed(2)}</p>
+                        <p>Price (per {historicalData.symbol}): ${currentData.market_data.current_price.usd.toFixed(2)}</p>
 
 
                         <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
-                            Percentage Difference: {percentDifference?.toFixed(2)}%
+                            Percentage Difference: {percentDifference?.toFixed(1)}%
                         </h2>
+
+                        {
+                            isIncreased ? (
+                                <div>
+                                    <p>
+                                        Total cash value now: ${
+                                            (percentDifference / 100).toFixed(2) * parseInt(price as string) + parseInt(price as string)
+                                        }
+                                    </p>
+                                    <p>
+                                        An increase of ${(percentDifference / 100).toFixed(2) * parseInt(price as string)}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p>
+                                        Total cash value now: ${
+                                            parseInt(price as string) - (percentDifference / 100).toFixed(2) * parseInt(price as string)
+                                        }
+                                    </p>
+                                    <p>
+                                        A decrease of ${(percentDifference / 100).toFixed(2) * parseInt(price as string)}
+                                    </p>
+                                </div>
+                            )
+                        }
                     </div>
                 )
             }

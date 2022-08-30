@@ -6,7 +6,7 @@ import { currencyData, Currency } from '../components/data'
 
 const Home: NextPage = () => {
 
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState<number>()
     const [date, setDate] = useState('')
     const [coin, setCoin] = useState(currencyData[0].id)
 
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         // reset UI state on form submit
         e.preventDefault()
         setDate('')
-        setPrice('')
+        setPrice(0)
     }
 
 
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
                 <label htmlFor="price">$ USD</label> <br />
                 <input
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => setPrice(parseInt(e.target.value))}
                     type="number"
                     name='price' /> <br /> <br />
 
