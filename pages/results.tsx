@@ -60,7 +60,7 @@ const Results: NextPage = () => {
             setIsIncreased(true)
             priceDiff = currentUsd - historicalUsd
             percentageDiff = (priceDiff / historicalUsd) * 100
-            setPercentDifference(percentageDiff)
+            setPercentDifference(parseInt(percentageDiff.toFixed(2)))
 
         } else if (currentUsd < historicalUsd) {
             setIsIncreased(false)
@@ -128,22 +128,22 @@ const Results: NextPage = () => {
                                 <div>
                                     <p>
                                         Total cash value now: ${
-                                            (percentDifference / 100).toFixed(2) * parseInt(price as string) + parseInt(price as string)
+                                            (percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string) + parseInt(price as string)
                                         }
                                     </p>
                                     <p>
-                                        An increase of ${(percentDifference / 100).toFixed(2) * parseInt(price as string)}
+                                        An increase of ${(percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)}
                                     </p>
                                 </div>
                             ) : (
                                 <div>
                                     <p>
                                         Total cash value now: ${
-                                            parseInt(price as string) - (percentDifference / 100).toFixed(2) * parseInt(price as string)
+                                            parseInt(price as string) - (percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)
                                         }
                                     </p>
                                     <p>
-                                        A decrease of ${(percentDifference / 100).toFixed(2) * parseInt(price as string)}
+                                        A decrease of ${(percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)}
                                     </p>
                                 </div>
                             )

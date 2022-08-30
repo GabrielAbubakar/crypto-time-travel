@@ -14,8 +14,6 @@ const Home: NextPage = () => {
     const handleSubmit = (e: any): void => {
         // reset UI state on form submit
         e.preventDefault()
-        setDate('')
-        setPrice(0)
     }
 
 
