@@ -30,7 +30,6 @@ const Results: NextPage = () => {
             })
             .then(data => {
                 setHistoricalData(data)
-                // console.log(data);
             })
             .catch((err) => {
                 console.log(err);
@@ -42,7 +41,6 @@ const Results: NextPage = () => {
             })
             .then(data => {
                 setCurrentData(data)
-                // console.log(data);
             })
             .catch((err) => {
                 console.log(err);
@@ -105,7 +103,7 @@ const Results: NextPage = () => {
             <p>COIN: {coin}</p>
 
             {
-                fetchSuccess && (
+                fetchSuccess && historicalData && (
                     <div>
                         <h3>Your purchase info:</h3>
                         <p>Investment: ${price}</p>

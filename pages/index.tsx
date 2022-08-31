@@ -1,21 +1,41 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { currencyData, Currency } from '../components/data'
 
 
 const Home: NextPage = () => {
 
+    const router = useRouter()
+
     const [price, setPrice] = useState<number>()
     const [date, setDate] = useState('')
     const [coin, setCoin] = useState(currencyData[0].id)
+
+    const [formFill, setFormFill] = useState<boolean>()
 
 
     const handleSubmit = (e: any): void => {
         // reset UI state on form submit
         e.preventDefault()
-    }
 
+        if (price && date && coin) {
+            setFormFill(true)
+            router.push({
+                pathname: "/results",
+                query: {
+                    price,
+                    coin,
+                    date
+                }
+            })
+        } else {
+            setFormFill(false)
+            setTimeout(() => {
+                setFormFill(true)
+            }, 5000);
+        }
+    }
 
     return (
         <div>
@@ -28,6 +48,7 @@ const Home: NextPage = () => {
             <form>
                 <label htmlFor="price">$ USD</label> <br />
                 <input
+                    required
                     value={price}
                     onChange={(e) => setPrice(parseInt(e.target.value))}
                     type="number"
@@ -35,7 +56,7 @@ const Home: NextPage = () => {
 
 
                 <label htmlFor="select-currency">IN:</label> <br />
-                <select name="select-currency" id="select" onChange={(e) => setCoin(e.target.value)}>
+                <select required name="select-currency" id="select" onChange={(e) => setCoin(e.target.value)}>
                     {
                         currencyData && currencyData.map((item: Currency, i: number) => (
                             <option value={item.id} key={i}>
@@ -46,25 +67,25 @@ const Home: NextPage = () => {
                 </select> <br /> <br />
 
                 <label htmlFor="date">ON:</label> <br />
-                <input type="date" name='date' value={date} onChange={(e) => setDate(e.target.value)} /> <br /> <br />
+                <input
+                    required
+                    type="date"
+                    name='date'
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)} /> <br /> <br />
 
 
                 <button onClick={handleSubmit}>
-                    <Link href={{
-                        pathname: "/results",
-                        query: {
-                            price,
-                            coin,
-                            date
-                        }
-                    }}>
-                        <a>
-                            Find out what it would be worth today
-                        </a>
-                    </Link>
+                    <a>
+                        Find out what it would be worth today
+                    </a>
                 </button>
 
             </form>
+
+            {formFill == false && (
+                <p style={{ color: 'red' }}>Please fill the form correctly (a date, a coin and a price value)</p>
+            )}
 
         </div>
     )
