@@ -11,7 +11,6 @@ const Results: NextPage = () => {
     // desctructure the data needed from router params
     const { query } = useRouter()
     const { date, price, coin } = query
-    // const [priceInt, setPriceInt] = useState(parseInt(price as string))
 
     // ui state
     const [historicalData, setHistoricalData] = useState<any>()
@@ -60,13 +59,13 @@ const Results: NextPage = () => {
             setIsIncreased(true)
             priceDiff = currentUsd - historicalUsd
             percentageDiff = (priceDiff / historicalUsd) * 100
-            setPercentDifference(parseInt(percentageDiff.toFixed(2)))
+            setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
 
         } else if (currentUsd < historicalUsd) {
             setIsIncreased(false)
             priceDiff = historicalUsd - currentUsd
             percentageDiff = (priceDiff / historicalUsd) * 100
-            setPercentDifference(percentageDiff)
+            setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
         }
     }
 
@@ -120,7 +119,7 @@ const Results: NextPage = () => {
 
 
                         <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
-                            Percentage Difference: {percentDifference?.toFixed(1)}%
+                            Percentage Difference: {percentDifference}%
                         </h2>
 
                         {
@@ -128,22 +127,22 @@ const Results: NextPage = () => {
                                 <div>
                                     <p>
                                         Total cash value now: ${
-                                            (percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string) + parseInt(price as string)
+                                            percentDifference && (percentDifference / 100) * parseInt(price as string) + parseInt(price as string)
                                         }
                                     </p>
                                     <p>
-                                        An increase of ${(percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)}
+                                        An increase of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
                                     </p>
                                 </div>
                             ) : (
                                 <div>
                                     <p>
                                         Total cash value now: ${
-                                            parseInt(price as string) - (percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)
+                                            percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
                                         }
                                     </p>
                                     <p>
-                                        A decrease of ${(percentDifference.toFixed(2) / 100).toFixed(2) * parseInt(price as string)}
+                                        A decrease of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
                                     </p>
                                 </div>
                             )
