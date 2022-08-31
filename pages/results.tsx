@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 
 type QueryParams = string | string[] | undefined
@@ -22,6 +23,9 @@ const Results: NextPage = () => {
     const [isIncreased, setIsIncreased] = useState<boolean>()
     const [percentDifference, setPercentDifference] = useState<number>()
 
+    const [coinExist, setCoinExist] = useState<boolean>()
+
+
 
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
         await fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
@@ -30,6 +34,11 @@ const Results: NextPage = () => {
             })
             .then(data => {
                 setHistoricalData(data)
+                if (data.hasOwnProperty('market_data')) {
+                    setCoinExist(true)
+                } else {
+                    setCoinExist(false)
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -48,22 +57,24 @@ const Results: NextPage = () => {
     }
 
     const computeResults = () => {
-        let percentageDiff: number
-        let priceDiff: number
-        const currentUsd = currentData.market_data.current_price.usd
-        const historicalUsd = historicalData.market_data.current_price.usd
+        if (coinExist) {
+            let percentageDiff: number
+            let priceDiff: number
+            const currentUsd = currentData.market_data.current_price.usd
+            const historicalUsd = historicalData.market_data.current_price.usd
 
-        if (currentUsd > historicalUsd) {
-            setIsIncreased(true)
-            priceDiff = currentUsd - historicalUsd
-            percentageDiff = (priceDiff / historicalUsd) * 100
-            setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
+            if (currentUsd > historicalUsd) {
+                setIsIncreased(true)
+                priceDiff = currentUsd - historicalUsd
+                percentageDiff = (priceDiff / historicalUsd) * 100
+                setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
 
-        } else if (currentUsd < historicalUsd) {
-            setIsIncreased(false)
-            priceDiff = historicalUsd - currentUsd
-            percentageDiff = (priceDiff / historicalUsd) * 100
-            setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
+            } else if (currentUsd < historicalUsd) {
+                setIsIncreased(false)
+                priceDiff = historicalUsd - currentUsd
+                percentageDiff = (priceDiff / historicalUsd) * 100
+                setPercentDifference(parseFloat(percentageDiff.toFixed(2)))
+            }
         }
     }
 
@@ -78,7 +89,7 @@ const Results: NextPage = () => {
     }, [query])
 
     useEffect(() => {
-        if (historicalData && currentData) {
+        if (historicalData && currentData && coinExist) {
             computeResults()
             setFetchSuccess(true)
         }
@@ -86,6 +97,17 @@ const Results: NextPage = () => {
     }, [historicalData, currentData])
 
 
+
+
+
+    if (fetchSuccess && !coinExist) {
+        return (
+            <div>
+                <h2>Lol🤣. This coin wasnt even a thing at the date you have chosen please go back and choose a valid date</h2>
+                <Link href='/'>Go Back</Link>
+            </div>
+        )
+    }
 
     if (!dataSuccess) {
         return (
@@ -97,51 +119,57 @@ const Results: NextPage = () => {
 
     return (
         <div>
-            <h1>If I had invested at</h1>
-            <p>DATE: {date?.toString().split('-').reverse().join('-')}</p>
-            <p>PRICE: ${price}</p>
-            <p>COIN: {coin}</p>
-
             {
-                fetchSuccess && historicalData && (
+                coinExist && (
                     <div>
-                        <h3>Your purchase info:</h3>
-                        <p>Investment: ${price}</p>
-                        <p>Name: {historicalData.name}</p>
-                        <p>Price (per {historicalData.symbol}): ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
-
-
-                        <h3>Current Data</h3>
-                        <p>Name: {currentData.name}</p>
-                        <p>Price (per {historicalData.symbol}): ${currentData.market_data.current_price.usd.toFixed(2)}</p>
-
-
-                        <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
-                            Percentage Difference: {percentDifference}%
-                        </h2>
+                        <h1>If I had invested at</h1>
+                        <p>DATE: {date?.toString().split('-').reverse().join('-')}</p>
+                        <p>PRICE: ${price}</p>
+                        <p>COIN: {coin}</p>
 
                         {
-                            isIncreased ? (
+                            fetchSuccess && (
                                 <div>
-                                    <p>
-                                        Total cash value now: ${
-                                            percentDifference && (percentDifference / 100) * parseInt(price as string) + parseInt(price as string)
-                                        }
-                                    </p>
-                                    <p>
-                                        An increase of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
-                                    </p>
-                                </div>
-                            ) : (
-                                <div>
-                                    <p>
-                                        Total cash value now: ${
-                                            percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
-                                        }
-                                    </p>
-                                    <p>
-                                        A decrease of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
-                                    </p>
+                                    <h3>Your purchase info:</h3>
+                                    <p>Investment: ${price}</p>
+                                    <p>Name: {historicalData.name}</p>
+                                    <p>Price (per {historicalData.symbol}): ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
+
+
+                                    <h3>Current Data</h3>
+                                    <p>Name: {currentData.name}</p>
+                                    <p>Price (per {historicalData.symbol}): ${currentData.market_data.current_price.usd.toFixed(2)}</p>
+
+
+                                    <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
+                                        Percentage Difference: {percentDifference}%
+                                    </h2>
+
+                                    {
+                                        isIncreased ? (
+                                            <div>
+                                                <p>
+                                                    Total cash value now: ${
+                                                        percentDifference && (percentDifference / 100) * parseInt(price as string) + parseInt(price as string)
+                                                    }
+                                                </p>
+                                                <p>
+                                                    An increase of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <p>
+                                                    Total cash value now: ${
+                                                        percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
+                                                    }
+                                                </p>
+                                                <p>
+                                                    A decrease of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
+                                                </p>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             )
                         }
