@@ -144,8 +144,7 @@ const Results: NextPage = () => {
                         <div>
                             <h1 className='text-gray-200 font-bold text-3xl md:text-4xl mb-12'>
                                 If you had invested <span className='text-green-700'>${price}</span> in
-                                <span className='text-indigo-400'> {coin}</span> at
-                                <span className='text-sky-700'> {date?.toString().split('-').reverse().join('-')}</span>
+                                <span className='text-indigo-400'> {coin}</span> at {date?.toString().split('-').reverse().join('-')}
                             </h1>
 
 

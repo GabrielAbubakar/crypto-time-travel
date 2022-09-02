@@ -14,7 +14,7 @@
 
 - **Framework**: [Next.js]()
 - **Languages**: [TypeScript]()
-- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+<!-- - **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) -->
 - **Styling**: [TailwindCSS]()
 - **Animations**: [Framer Motion](https://www.framer.com/)
 - **Testing**: 
@@ -40,14 +40,15 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 
 
 ## Styling
-
-Undecided
+ The styling used in the application will rely on TailwindCSS utility library for the quick and reusable deployment of styles for components etc.
 
 
 ## New Learnings
 
 There were various new tools I learned in the development of this application and are listed such:
--
+- Configuration and utilization of CSS utility libraries specifically TailwindCSS
+- Stronger Static Typing concepts with the Typescript superset of Javascript.
+- The sending and reciept of data through URL params with Next Router.
 
 
 ## Testing

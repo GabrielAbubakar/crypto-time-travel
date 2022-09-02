@@ -40,7 +40,7 @@ const Home: NextPage = () => {
 
     return (
         <Contatiner>
-            <div className='max-w-7xl mx-auto px-6 pt-20 pb-4'>
+            <div className='max-w-7xl mx-auto px-6 pt-20 pb-20'>
                 <h1 className='text-2xl md:text-3xl font-bold mb-9 md:mb-12 text-blue-400'>🏃🏽‍♂️Crypto Time Travel🕑</h1>
                 <p className='mb-16'>
                     Ever wondered how much you would have made if you&apos;d bought Bitcoin 6 years ago when that your weird pal told you to? Well, here you are, just input the amount in dollars, choose the coin and the date in the past and find out how much you could have gotten (or lost) over the years.

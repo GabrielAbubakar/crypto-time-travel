@@ -25,7 +25,8 @@ const DifferenceDetails = ({ isIncreased, percentDifference, price }: DiffProps)
                         </p>
                     </div>
                 ) : (
-                    <div>
+                    <div className='block p-6 max-w-sm rounded-lg border shadow-md
+                                                bg-gray-900 border-gray-700'>
                         <p className='mb-2 text-2xl font-bold tracking-tight text-white'>
                             Total cash value now: ${
                                 percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
