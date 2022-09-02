@@ -31,36 +31,17 @@ const Results: NextPage = () => {
     const [coinExist, setCoinExist] = useState<boolean>()
 
 
-
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
-        await fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
-            .then((res) => {
-                return res.json()
-            })
-            .then(data => {
-                setHistoricalData(data)
-                if (data.hasOwnProperty('market_data')) {
-                    setCoinExist(true)
-                } else {
-                    setCoinExist(false)
-                }
-            })
-            .catch((err) => {
-                setFetchSuccess(false)
-                console.log(err);
-            })
+        const [hdata, cdata] = await Promise.all([
+            fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`),
+            fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+        ]);
 
-        await fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
-            .then((res) => {
-                return res.json()
-            })
-            .then(data => {
-                setCurrentData(data)
-            })
-            .catch((err) => {
-                setFetchSuccess(false)
-                console.log(err);
-            })
+        const his = await hdata.json()
+        const cur = await cdata.json()
+
+        return [his, cur]
+        // returns a promise with the result return above
     }
 
     const computeResults = () => {
@@ -85,20 +66,43 @@ const Results: NextPage = () => {
         }
     }
 
-    useEffect(() => {
+    const initFetch = () => {
         if (date && coin && price) {
-            fetchData(date, coin)
             setDataSuccess(true)
+            fetchData(date, coin)
+                .then(([his, cur]) => {
+                    // set states if succesful
+                    setHistoricalData(his)
+                    setCurrentData(cur)
+
+                    // check if the coin exited at the chosen date
+                    if (his.hasOwnProperty('market_data')) {
+                        setCoinExist(true)
+                    } else {
+                        setCoinExist(false)
+                    }
+                    setFetchSuccess(true)
+                })
+                .catch((err) => {
+                    // handle errors
+                    setFetchSuccess(false)
+                    console.log(err);
+                })
         } else {
             setDataSuccess(false)
         }
+    }
+
+
+    useEffect(() => {
+        initFetch()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query])
 
     useEffect(() => {
         if (historicalData && currentData && coinExist) {
             computeResults()
-            setFetchSuccess(true)
+            // setFetchSuccess(true)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [historicalData, currentData])
@@ -106,7 +110,9 @@ const Results: NextPage = () => {
     // if (dataSuccess && !fetchSuccess) {
     //     return (
     //         <Contatiner>
-    //             Loading...
+    //             <h2 className='p-10'>
+    //                 Loading...
+    //             </h2>
     //         </Contatiner>
     //     )
     // }
@@ -114,7 +120,9 @@ const Results: NextPage = () => {
     if (fetchSuccess == false) {
         return (
             <Contatiner>
-                <h2>Network Error. Please check your internet connection and try again.</h2>
+                <h2 className='p-10'>
+                    Network Error. Please check your internet connection and try again.
+                </h2>
             </Contatiner>
         )
     }
@@ -122,19 +130,21 @@ const Results: NextPage = () => {
     if (fetchSuccess && !coinExist) {
         return (
             <Contatiner>
-                <h2>Lol🤣. This coin wasnt even a thing at the date you have chosen please go back and choose a valid date</h2>
+                <h2 className='p-10'>
+                    The coin that you have chosen has no data on the date you chose. Please go back and choose a date before today, when the coin existed and not a date after today.
+                </h2>
                 <Link href='/'>Go Back</Link>
             </Contatiner>
         )
     }
 
-    if (!dataSuccess) {
-        return (
-            <Contatiner>
-                Sorry you must have missed an input field in the last page
-            </Contatiner>
-        )
-    }
+    // if (!dataSuccess) {
+    //     return (
+    //         <Contatiner>
+    //             Sorry you must have missed an input field in the last page
+    //         </Contatiner>
+    //     )
+    // }
 
     return (
         <Contatiner>

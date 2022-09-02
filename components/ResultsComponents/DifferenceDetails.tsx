@@ -13,13 +13,13 @@ const DifferenceDetails = ({ isIncreased, percentDifference, price }: DiffProps)
                                                 bg-gray-900 border-gray-700'>
                         <p className='mb-2 text-2xl font-bold tracking-tight text-white'>
                             Total cash value now: ${
-                                (percentDifference && (percentDifference / 100) * parseInt(price as string) + parseInt(price as string))?.toFixed(2)
+                                percentDifference && ((percentDifference / 100) * parseInt(price as string) + parseInt(price as string))?.toFixed(2)
                             }
                         </p>
                         <p>
                             Your initial deposit has now given you returns with an additional <span className='text-green-600 font-bold'>
                                 ${
-                                    (percentDifference && (percentDifference / 100) * parseInt(price as string))?.toFixed(2)
+                                    percentDifference && ((percentDifference / 100) * parseInt(price as string))?.toFixed(2)
                                 }
                             </span> 🕺🏽🕺🏽
                         </p>
@@ -29,12 +29,14 @@ const DifferenceDetails = ({ isIncreased, percentDifference, price }: DiffProps)
                                                 bg-gray-900 border-gray-700'>
                         <p className='mb-2 text-2xl font-bold tracking-tight text-white'>
                             Total cash value now: ${
-                                percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
+                                percentDifference && (parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)).toFixed(2)
                             }
                         </p>
                         <p>
                             Unfortunately the coin&apos;s value fell and your initial deposit has resulted in a  <span className='text-red-600 font-bold'>
-                                ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
+                                ${
+                                    percentDifference && ((percentDifference / 100) * parseInt(price as string)).toFixed(2)
+                                }
                             </span> loss😢😢
                         </p>
                     </div>
