@@ -2,6 +2,11 @@ import type { NextPage } from 'next'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Contatiner from '../components/Container'
+import PercentageDifference from '../components/ResultsComponents/PercentageDifference'
+import PurchaseInfo from '../components/ResultsComponents/PurchaseInfo'
+import DifferenceDetails from '../components/ResultsComponents/DifferenceDetails'
+import Footer from '../components/ResultsComponents/Footer'
 
 
 type QueryParams = string | string[] | undefined
@@ -26,34 +31,21 @@ const Results: NextPage = () => {
     const [coinExist, setCoinExist] = useState<boolean>()
 
 
-
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
-        await fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
-            .then((res) => {
-                return res.json()
-            })
-            .then(data => {
-                setHistoricalData(data)
-                if (data.hasOwnProperty('market_data')) {
-                    setCoinExist(true)
-                } else {
-                    setCoinExist(false)
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        const fetchUrl = fetch(
+            `https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
+        const currentDataUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
 
-        await fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
-            .then((res) => {
-                return res.json()
-            })
-            .then(data => {
-                setCurrentData(data)
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        const [hdata, cdata] = await Promise.all([
+            fetchUrl,
+            currentDataUrl
+        ]);
+
+        const history = await hdata.json()
+        const current = await cdata.json()
+
+        return [history, current]
+        // returns a promise with the result return above
     }
 
     const computeResults = () => {
@@ -78,105 +70,129 @@ const Results: NextPage = () => {
         }
     }
 
-    useEffect(() => {
+    const initFetch = () => {
+        // if query values were all recieved run the api call
         if (date && coin && price) {
-            fetchData(date, coin)
             setDataSuccess(true)
+
+            fetchData(date, coin)
+                .then(([his, cur]) => {
+                    // set states if succesful
+                    setHistoricalData(his)
+                    setCurrentData(cur)
+
+                    // check if the coin exited at the chosen date
+                    if (his.hasOwnProperty('market_data')) {
+                        setCoinExist(true)
+                    } else {
+                        setCoinExist(false)
+                    }
+                    setFetchSuccess(true)
+                })
+                .catch((err) => {
+                    // handle errors
+                    setFetchSuccess(false)
+                    console.log(err);
+                })
         } else {
             setDataSuccess(false)
         }
+    }
+
+
+    useEffect(() => {
+        initFetch()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query])
 
     useEffect(() => {
         if (historicalData && currentData && coinExist) {
             computeResults()
-            setFetchSuccess(true)
+            // setFetchSuccess(true)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [historicalData, currentData])
 
+    // if (dataSuccess && !fetchSuccess) {
+    //     return (
+    //         <Contatiner>
+    //             <h2 className='p-10'>
+    //                 Loading...
+    //             </h2>
+    //         </Contatiner>
+    //     )
+    // }
 
-
-
+    if (fetchSuccess == false) {
+        return (
+            <Contatiner>
+                <h2 className='p-10'>
+                    Network Error. Please check your internet connection and try again.
+                </h2>
+            </Contatiner>
+        )
+    }
 
     if (fetchSuccess && !coinExist) {
         return (
-            <div>
-                <h2>Lol🤣. This coin wasnt even a thing at the date you have chosen please go back and choose a valid date</h2>
+            <Contatiner>
+                <h2 className='p-10'>
+                    The coin that you have chosen has no data on the date you chose. Please go back and choose a date before today, when the coin existed and not a date after today.
+                </h2>
                 <Link href='/'>Go Back</Link>
-            </div>
+            </Contatiner>
         )
     }
 
-    if (!dataSuccess) {
-        return (
-            <div>
-                Sorry you must have missed an input field in the last page
-            </div>
-        )
-    }
+    // if (!dataSuccess) {
+    //     return (
+    //         <Contatiner>
+    //             Sorry you must have missed an input field in the last page
+    //         </Contatiner>
+    //     )
+    // }
 
     return (
-        <div>
-            {
-                coinExist && (
-                    <div>
-                        <h1>If I had invested at</h1>
-                        <p>DATE: {date?.toString().split('-').reverse().join('-')}</p>
-                        <p>PRICE: ${price}</p>
-                        <p>COIN: {coin}</p>
-
-                        {
-                            fetchSuccess && (
-                                <div>
-                                    <h3>Your purchase info:</h3>
-                                    <p>Investment: ${price}</p>
-                                    <p>Name: {historicalData.name}</p>
-                                    <p>Price (per {historicalData.symbol}): ${historicalData.market_data.current_price.usd.toFixed(2)}</p>
+        <Contatiner>
+            <div className='max-w-7xl mx-auto px-6 pt-20 pb-10'>
+                {
+                    coinExist && (
+                        <div>
+                            <h1 className='text-gray-200 font-bold text-3xl md:text-4xl mb-12'>
+                                If you had invested <span className='text-green-700'>${price}</span> in
+                                <span className='text-indigo-400'> {coin}</span> at {date?.toString().split('-').reverse().join('-')}
+                            </h1>
 
 
-                                    <h3>Current Data</h3>
-                                    <p>Name: {currentData.name}</p>
-                                    <p>Price (per {historicalData.symbol}): ${currentData.market_data.current_price.usd.toFixed(2)}</p>
+                            {
+                                fetchSuccess && (
+                                    <div>
+                                        <PurchaseInfo
+                                            price={price}
+                                            historicalData={historicalData}
+                                            currentData={currentData}
+                                        />
 
+                                        <PercentageDifference
+                                            isIncreased={isIncreased}
+                                            percentDifference={percentDifference!}
+                                        />
 
-                                    <h2 style={{ color: isIncreased == true ? 'green' : 'red' }}>
-                                        Percentage Difference: {percentDifference}%
-                                    </h2>
+                                        <DifferenceDetails
+                                            isIncreased={isIncreased}
+                                            percentDifference={percentDifference!}
+                                            price={price!}
+                                        />
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )
+                }
 
-                                    {
-                                        isIncreased ? (
-                                            <div>
-                                                <p>
-                                                    Total cash value now: ${
-                                                        percentDifference && (percentDifference / 100) * parseInt(price as string) + parseInt(price as string)
-                                                    }
-                                                </p>
-                                                <p>
-                                                    An increase of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <p>
-                                                    Total cash value now: ${
-                                                        percentDifference && parseInt(price as string) - (percentDifference / 100) * parseInt(price as string)
-                                                    }
-                                                </p>
-                                                <p>
-                                                    A decrease of ${percentDifference && (percentDifference / 100) * parseInt(price as string)}
-                                                </p>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            )
-                        }
-                    </div>
-                )
-            }
-        </div>
+                <Footer />
+            </div>
+        </Contatiner>
     )
 }
 
