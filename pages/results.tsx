@@ -32,15 +32,19 @@ const Results: NextPage = () => {
 
 
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
+        const fetchUrl = fetch(
+            `https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
+        const currentDataUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+
         const [hdata, cdata] = await Promise.all([
-            fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`),
-            fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+            fetchUrl,
+            currentDataUrl
         ]);
 
-        const his = await hdata.json()
-        const cur = await cdata.json()
+        const history = await hdata.json()
+        const current = await cdata.json()
 
-        return [his, cur]
+        return [history, current]
         // returns a promise with the result return above
     }
 
@@ -67,8 +71,10 @@ const Results: NextPage = () => {
     }
 
     const initFetch = () => {
+        // if query values were all recieved run the api call
         if (date && coin && price) {
             setDataSuccess(true)
+
             fetchData(date, coin)
                 .then(([his, cur]) => {
                     // set states if succesful
