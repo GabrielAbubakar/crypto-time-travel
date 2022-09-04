@@ -3,17 +3,17 @@ import { currencyData, Currency } from '../data'
 
 type CashProps = {
     price: string,
-    setPrice: any
+    setPrice: (e: string) => any | void
 }
 
 type DateProps = {
     date: string,
-    setDate: any
+    setDate: (e: string) => any | void
 }
 
 type CoinProps = {
     coin: string,
-    setCoin: any,
+    setCoin: (e: string) => any | void
 }
 
 
@@ -24,6 +24,7 @@ export const CashInput = ({ price, setPrice }: CashProps) => {
     return (
         <>
             <input
+                title='amount'
                 className='border text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 
                             bg-gray-600 border-gray-500 placeholder-gray-400 text-gray-100 shadow-sm 
                             placeholder-black-800 placeholder:italic focus:outline-none mb-7 w-full'
@@ -31,7 +32,9 @@ export const CashInput = ({ price, setPrice }: CashProps) => {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 type="number"
-                name='price' />
+                name='price'
+                placeholder='Amount'
+            />
         </>
     )
 }
@@ -41,6 +44,7 @@ export const CoinInput = ({ coin, setCoin, }: CoinProps) => {
     return (
         <>
             <select
+                title='coin-select'
                 className='placeholder-black-800 placeholder:italic border text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-gray-100 
                      mb-7 w-full'
                 required
@@ -61,6 +65,7 @@ export const DateInput = ({ date, setDate }: DateProps) => {
     return (
         <>
             <input
+                title='date'
                 className='placeholder-black-800 placeholder:italic border text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-gray-100 
                     mb-7 w-full'
                 required
