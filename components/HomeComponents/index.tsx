@@ -16,6 +16,10 @@ type CoinProps = {
     setCoin: (e: string) => any | void
 }
 
+type ButtonProps = {
+    submit: (e: any) => any | void
+}
+
 
 
 
@@ -73,6 +77,22 @@ export const DateInput = ({ date, setDate }: DateProps) => {
                 name='date'
                 value={date}
                 onChange={(e) => setDate(e.target.value)} />
+        </>
+    )
+}
+
+
+export const SubmitButton = ({ submit }: ButtonProps) => {
+    return (
+        <>
+            <button
+                role='submit'
+                className='mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+                onClick={submit}>
+                <a>
+                    Find out what it would be worth today
+                </a>
+            </button>
         </>
     )
 }
