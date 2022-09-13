@@ -15,22 +15,26 @@ import { createMockRouter } from '../test-utils/createMockRouter'
 
 describe("Tests for the results page", () => {
     // test 1
-    it("Should render out results after fetch", () => {
-        render(
-            <RouterContext.Provider
-                value={createMockRouter({
-                    query: {
-                        price: '100',
-                        coin: 'bitcoin',
-                        date: '09/10/2022'
-                    }
-                })}>
-                <Results />
-            </RouterContext.Provider>
-        )
+    describe("Test with specific mocked result", () => {
+        beforeEach(() => {
+            render(
+                <RouterContext.Provider
+                    value={createMockRouter({
+                        query: {
+                            price: '100',
+                            coin: 'bitcoin',
+                            date: '09/10/2022'
+                        }
+                    })}>
+                    <Results />
+                </RouterContext.Provider>
+            )
+        })
 
 
-        // const elem = screen.getByText(/bitcoin/i)
-        // expect(elem).toBeInTheDocument()
+        it("Should render out results after fetch", async () => {
+            // const elem = screen.getByText(/bitcoin/i)
+            // expect(elem).toBeInTheDocument()
+        })
     })
 })

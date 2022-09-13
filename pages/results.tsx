@@ -30,21 +30,67 @@ const Results: NextPage = () => {
 
     const [coinExist, setCoinExist] = useState<boolean>()
 
+    const [isLoading, setIsLoading] = useState<boolean>()
+    const [error, setError] = useState<boolean>()
+
 
     const fetchData = async (date: QueryParams, coin: QueryParams) => {
-        const fetchUrl = fetch(
-            `https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
-        const currentDataUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+        setIsLoading(true)
 
-        const [hdata, cdata] = await Promise.all([
-            fetchUrl,
-            currentDataUrl
-        ]);
+        try {
+            // set the fetch queries for current and past data based on parameters
+            const currentDataUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+            const fetchUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
 
-        const history = await hdata.json()
-        const current = await cdata.json()
+            // concurrent promises with promise all for the two pieces of data
+            const [hdata, cdata] = await Promise.all([
+                fetchUrl,
+                currentDataUrl
+            ]);
 
-        return [history, current]
+            // 
+            const history = await hdata.json()
+            const current = await cdata.json()
+
+            // if (!hdata.ok || !cdata.ok) {
+            //     throw new Error(history.message && current.message)
+            // }
+
+            setHistoricalData(history)
+            setCurrentData(current)
+
+            // check if the coin existed at the chosen date
+            if (history.hasOwnProperty('market_data')) {
+                setCoinExist(true)
+            } else {
+                setCoinExist(false)
+            }
+
+            setFetchSuccess(true)
+
+
+            // return [history, current]
+        } catch (e: any) {
+            setFetchSuccess(false)
+            setError(e.message)
+        } finally {
+            setIsLoading(false)
+        }
+
+
+        // const fetchUrl = fetch(
+        //     `https://api.coingecko.com/api/v3/coins/${coin}/history?date=${date?.toString().split('-').reverse().join('-')}`)
+        // const currentDataUrl = fetch(`https://api.coingecko.com/api/v3/coins/${coin}`)
+
+        // const [hdata, cdata] = await Promise.all([
+        //     fetchUrl,
+        //     currentDataUrl
+        // ]);
+
+        // const history = await hdata.json()
+        // const current = await cdata.json()
+
+        // return [history, current]
         // returns a promise with the result return above
     }
 
@@ -76,24 +122,24 @@ const Results: NextPage = () => {
             setDataSuccess(true)
 
             fetchData(date, coin)
-                .then(([his, cur]) => {
-                    // set states if succesful
-                    setHistoricalData(his)
-                    setCurrentData(cur)
+            // .then(([his, cur]) => {
+            //     // set states if successful
+            //     setHistoricalData(his)
+            //     setCurrentData(cur)
 
-                    // check if the coin exited at the chosen date
-                    if (his.hasOwnProperty('market_data')) {
-                        setCoinExist(true)
-                    } else {
-                        setCoinExist(false)
-                    }
-                    setFetchSuccess(true)
-                })
-                .catch((err) => {
-                    // handle errors
-                    setFetchSuccess(false)
-                    console.log(err);
-                })
+            //     // check if the coin existed at the chosen date
+            //     if (his.hasOwnProperty('market_data')) {
+            //         setCoinExist(true)
+            //     } else {
+            //         setCoinExist(false)
+            //     }
+            //     setFetchSuccess(true)
+            // })
+            // .catch((err) => {
+            //     // handle errors
+            //     setFetchSuccess(false)
+            //     console.log(err);
+            // })
         } else {
             setDataSuccess(false)
         }
@@ -101,7 +147,12 @@ const Results: NextPage = () => {
 
 
     useEffect(() => {
-        initFetch()
+        if (date && coin && price) {
+            setDataSuccess(true)
+            fetchData(date, coin)
+        } else {
+            setDataSuccess(false)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query])
 
@@ -113,15 +164,17 @@ const Results: NextPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [historicalData, currentData])
 
-    // if (dataSuccess && !fetchSuccess) {
-    //     return (
-    //         <Contatiner>
-    //             <h2 className='p-10'>
-    //                 Loading...
-    //             </h2>
-    //         </Contatiner>
-    //     )
-    // }
+
+
+    if (isLoading) {
+        return (
+            <Contatiner>
+                <h2 className='p-10'>
+                    Loading...
+                </h2>
+            </Contatiner>
+        )
+    }
 
     if (fetchSuccess == false) {
         return (
@@ -144,13 +197,13 @@ const Results: NextPage = () => {
         )
     }
 
-    // if (!dataSuccess) {
-    //     return (
-    //         <Contatiner>
-    //             Sorry you must have missed an input field in the last page
-    //         </Contatiner>
-    //     )
-    // }
+    if (!dataSuccess) {
+        return (
+            <Contatiner>
+                Sorry your search must have complete options for date, coin and price in the home page
+            </Contatiner>
+        )
+    }
 
     return (
         <Contatiner>
