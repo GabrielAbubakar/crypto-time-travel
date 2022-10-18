@@ -1,6 +1,5 @@
 # Crypto Time Travel
 
-![Crypto Time Travel](https://i.imgur.com/)
 
 ## Overview:
 
