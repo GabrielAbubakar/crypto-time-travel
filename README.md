@@ -9,54 +9,7 @@
 - It uses this information to communicate with the Coin Gecko API and gets the current price of queried crypto currency in USD.
 - Price and percentage increase or decrease in value will be computed on the client side and the result will be rendered in cards for the user to see
 
+## User Flow
+Below is the intended user flow for the project alongside image display
 
-## Stack
-
-- **Framework**: [Next.js]()
-- **Languages**: [TypeScript]()
-<!-- - **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) -->
-- **Styling**: [TailwindCSS]()
-- **Animations**: [Framer Motion](https://www.framer.com/)
-- **Testing**: 
-    - [React Testing Library](https://testing-library.com/)
-    - [Jest](https://jestjs.io/)
-- **Deployment**: [Vercel](https://www.vercel.com/)
-- **API**: 
-    - [API Route]()
-
-
-## Running Locally
-
-```bash
-$ git clone https://github.com/GabrielAbubakar/crypto-time-travel.git
-$ cd crypto-time-travel
-$ npm install
-$ npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-
-## Styling
- The styling used in the application will rely on TailwindCSS utility library for the quick and reusable deployment of styles for components etc.
-
-
-## New Learnings
-
-There were various new tools I learned in the development of this application and are listed such:
-- Configuration and utilization of CSS utility libraries specifically TailwindCSS
-- Stronger Static Typing concepts with the Typescript superset of Javascript.
-- The sending and reciept of data through URL params with Next Router.
-
-
-## Testing
-
-Testing was setup for this project using the structure found at [this article:](https://blog.jarrodwatts.com/how-to-set-up-nextjs-with-jest-react-testing-library-and-playwright)
-
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
+[
